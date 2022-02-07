@@ -1,25 +1,14 @@
-
-provider "google"{
-    region = "us-central1"
-    zone = "us-central1-c"
+variable "gcp_service_list" {
+  description ="The list of apis necessary for the demo"
+  type = list(string)
+  default = ["bigquery.googleapis.com",
+            "bigqueryconnection.googleapis.com",
+            "bigquerystorage.googleapis.com",
+            "storage-component.googleapis.com",
+            "storage-api.googleapis.com"]
 }
 
-resource "google_compute_instance" "vm_instance" {
-    name = "sid-terraform-compute"
-    machine_type = "f1-micro"
-
-    boot_disk{
-        initialize_params {
-          image = "debian-cloud/debian-9"
-        }
-    }
-
-    network_interface {
-      network = "${google_compute_network.vpc_network.self_link}"
-    }
-}
-
-resource "google_compute_network" "vpc_network" {
-    name = "sid-terraform-network"
-    auto_create_subnetworks = "true"
+resource "google_project_service" "gcp_services" {
+  for_each = toset(var.gcp_service_list)
+  service = each.key
 }
