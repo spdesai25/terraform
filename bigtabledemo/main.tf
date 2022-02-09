@@ -21,8 +21,16 @@ resource "google_storage_bucket" "bucket" {
   location = "US"
 }
 
+resource "google_storage_bucket_object" "datafiles" {
+  
+  for_each = fileset("./datasets/","*")
+  name = "${each.value}"
+  bucket = "${google_storage_bucket.bucket.name}"
+  source = "./datasets/${each.value}"
+}
+/*
 resource "google_storage_bucket_object" "datafile" {
   name = "airportdata"
   source = "./datasets/airlines_data.csv"
   bucket = "${google_storage_bucket.bucket.name}"
-}
+}*/
