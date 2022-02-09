@@ -23,6 +23,6 @@ resource "google_storage_bucket" "bucket" {
 
 resource "google_storage_bucket_object" "datafile" {
   name = "airportdata"
-  source = "https://storage.googleapis.com/cloud-samples-data/bigquery/flights/bq-flights-lax.csv"
+  source = "./datasets/airlines_data.csv"
   bucket = "${google_storage_bucket.bucket.name}"
 }
