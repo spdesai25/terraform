@@ -31,15 +31,19 @@ resource "google_storage_bucket_object" "datafiles" {
 }
 
 resource "google_dataproc_cluster" "mycluster" {
+  provider = google-beta
   name     = "biglake-demo-cluster"
   region = "us-central1"
 
-  cluster_config {
+  cluster_config {  
     gce_cluster_config{
         metadata = {
             bigquery-connector-url = "gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar" 
             spark-bigquery-connector-url = "gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar"           
         }
+    }
+    endpoint_config{
+        enable_http_port_access = "true"
     }
     software_config {
       optional_components = ["ZEPPELIN"]
