@@ -1,3 +1,4 @@
+//define a variable with list of GCP services to be enabled
 variable "gcp_service_list" {
   description ="The list of apis necessary for the demo"
   type = list(string)
@@ -9,6 +10,7 @@ variable "gcp_service_list" {
             "dataproc.googleapis.com"]
 }
 
+//module to enable the required GCP services
 resource "google_project_service" "gcp_services" {
   for_each = toset(var.gcp_service_list)
   service = each.key
@@ -18,6 +20,7 @@ resource "google_project_service" "gcp_services" {
 resource "random_uuid" "test" {
 }
 
+//module to create GCS bucket for hosting data files
 resource "google_storage_bucket" "bucket" {
   name   = "bigtabledemo-${random_uuid.test.result}"
   location = "US"
@@ -26,6 +29,7 @@ resource "google_storage_bucket" "bucket" {
   ]
 }
 
+//module to load datafiles into the GCS bucket
 resource "google_storage_bucket_object" "datafiles" {
   
   for_each = fileset("./datasets/","*")
@@ -37,6 +41,7 @@ resource "google_storage_bucket_object" "datafiles" {
   ]
 }
 
+//module to create the dataproc cluster with Zeppelin and https endpoints enabled
 resource "google_dataproc_cluster" "mycluster" {
   provider = google-beta
   name     = "biglake-demo-cluster"
