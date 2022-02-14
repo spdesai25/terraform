@@ -12,6 +12,7 @@ variable "gcp_service_list" {
 resource "google_project_service" "gcp_services" {
   for_each = toset(var.gcp_service_list)
   service = each.key
+  disable_dependent_services = true
 }
 
 resource "random_uuid" "test" {
@@ -20,6 +21,9 @@ resource "random_uuid" "test" {
 resource "google_storage_bucket" "bucket" {
   name   = "bigtabledemo-${random_uuid.test.result}"
   location = "US"
+  depends_on = [
+    google_project_service.gcp_services
+  ]
 }
 
 resource "google_storage_bucket_object" "datafiles" {
@@ -28,14 +32,19 @@ resource "google_storage_bucket_object" "datafiles" {
   name = "${each.value}"
   bucket = "${google_storage_bucket.bucket.name}"
   source = "./datasets/${each.value}"
+  depends_on = [
+    google_storage_bucket.bucket
+  ]
 }
 
 resource "google_dataproc_cluster" "mycluster" {
   provider = google-beta
   name     = "biglake-demo-cluster"
   region = "us-central1"
-
-  cluster_config {  
+  depends_on = [
+    google_project_service.gcp_services
+  ]
+  cluster_config {    
     gce_cluster_config{
         metadata = {
             bigquery-connector-url = "gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar" 
