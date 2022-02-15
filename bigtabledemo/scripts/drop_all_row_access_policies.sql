@@ -1,0 +1,1 @@
+DROP ALL ROW ACCESS POLICIES ON bigtable_demo.flights
