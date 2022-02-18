@@ -41,6 +41,17 @@ resource "google_storage_bucket_object" "datafiles" {
   ]
 }
 
+//module to create a bq dataset
+resource "google_bigquery_dataset" "dataset" {
+  dataset_id                  = "bigtable_demo"
+  friendly_name               = "demo"
+  description                 = "This is a bigtable demo dataset"
+  location                    = "US"
+    depends_on = [
+    google_project_service.gcp_services
+  ]
+}
+
 //module to create the dataproc cluster with Zeppelin and https endpoints enabled
 resource "google_dataproc_cluster" "mycluster" {
   provider = google-beta
