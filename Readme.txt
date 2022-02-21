@@ -1,0 +1,1 @@
+This repository is a collection of Terraform modules for deploying resources on Google Cloud for meeting specific architectural scenarios. 
